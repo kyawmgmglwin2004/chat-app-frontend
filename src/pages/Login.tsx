@@ -1,21 +1,47 @@
 import React, { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
-    password:""
+    password: "",
   });
+  const [data, setData] = useState({
+    email: "",
+    phone: "",
+    password: "",
+  })
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [signUP, setSignUp] = useState(false);
+  const [login, setLogin] = useState(true);
+
+  const signUpForm = () => {
+    setSignUp(true);
+    setLogin(false);
+  };
+  const loginForm = () => {
+    setLogin(true);
+    setSignUp(false);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    setFormData({...formData, [name]: value});
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  const handleChangeSignUP = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("token: ", captchaToken);
+    if (!captchaToken) {
+      alert("Please verify that you are not a robot.");
+    }
     setIsSending(true);
     setIsSent(false);
 
@@ -24,7 +50,7 @@ export default function Login() {
         {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData, captchaToken}),
       }
       );
       console.log("result: ", response);
@@ -42,107 +68,240 @@ export default function Login() {
     } finally {
        setIsSending(false);
     }
-  }
+  };
+  const handleSubmitSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("token: ", captchaToken);
+    if (!captchaToken) {
+      alert("Please verify that you are not a robot.");
+    }
+    setIsSending(true);
+    setIsSent(false);
 
-    // Replace this with your backend / APK integration
+    try {
+      const response = await fetch("",
+        {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({...data, captchaToken}),
+      }
+      );
+      console.log("result: ", response);
+      if(response.ok) {
+        setIsSent(true);
+        setData({ email: "", password: "", phone: ""});
+      }else {
+        setIsSent(false);
+        alert("Failed to Login!");
+      }
+    } catch (error) {
+       console.error(error);
+      alert("An error occurred. Try again.");
+      setIsSent(false);
+    } finally {
+       setIsSending(false);
+    }
+  };
+
+  // Replace this with your backend / APK integration
   //   console.log("Login attempt:", { email, password });
   //   alert("Submitted — check console for data.");
   // };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white px-4">
-      <div className="w-full max-w-md bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-2">
-          Welcome back
-        </h1>
-        <p className="text-sm text-gray-500 mb-6">Sign in to continue</p>
+    <div className=" flex items-center justify-center mt-[15vh] lg:mt-[3vh]">
+      {login && (
+        <div className="w-full max-w-md bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-5">
+          <p className="text-xl text-blue-400 mb-6 font-bold">
+            Sign in to continue
+          </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              onChange={handleChange}
-              required
-              placeholder="you@example.com"
-              className="w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm text-start font-medium text-gray-700 mb-1"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                onChange={handleChange}
+                required
+                placeholder="you@example.com"
+                className="w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400
                          focus:outline-none transition duration-150
                          hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-            />
-          </div>
+              />
+            </div>
 
-          {/* Password */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                required
-                placeholder="••••••••"
-                onChange={handleChange}
-                className="w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 pr-12 text-gray-900 placeholder-gray-400
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-start text-gray-700 mb-1"
+              >
+                Password
+              </label>
+              <div className="relative mb-5">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="••••••••"
+                  onChange={handleChange}
+                  className="w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 pr-12 text-gray-900 placeholder-gray-400
                            focus:outline-none transition duration-150
                            hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-2 flex items-center px-2 text-sm text-gray-600 hover:text-blue-500 focus:outline-none"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              <ReCAPTCHA
+                sitekey="6LcSus8rAAAAADMFRUBVlKgg0saBSjW6oAZgR_KP"
+                onChange={(token) => setCaptchaToken(token)}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-2 flex items-center px-2 text-sm text-gray-600 hover:text-blue-500 focus:outline-none"
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
             </div>
-          </div>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full rounded-lg px-4 py-3 font-medium shadow-sm
+            <button
+              type="submit"
+              className="w-full rounded-lg px-4 py-3 font-medium shadow-sm
                        bg-transparent border border-blue-500 text-blue-600
-                       hover:bg-blue-500 hover:text-white transition-colors duration-150"
-                       disabled={isSending}
-          > 
-            {isSending ? "Sending..." : isSent ? "Send" : "Send"}
+                       hover:bg-blue-400 hover:text-white transition-colors duration-150"
+              disabled={isSending}
+            >
+              {isSending ? "Logining..." : isSent ? "Login" : "Login"}
+            </button>
+
+            {/* Extras */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
+                Remember me
+              </label>
+              <a href="#" className="hover:text-blue-500">
+                Forgot password?
+              </a>
+            </div>
+          </form>
+          <button
+            onClick={signUpForm}
+            className="mx-auto mt-2 underline text-sm hover:text-blue-400"
+          >
+            Sign Up
           </button>
+        </div>
+      )}
+      {signUP && (
+        <div className="w-full max-w-md bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-5">
+          <p className="text-xl text-blue-400 mb-6 font-bold">
+            Sign up to continue
+          </p>
 
-          {/* Extras */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500">
-            <label className="flex items-center gap-2">
+          <form onSubmit={handleSubmitSignup} className="space-y-4 ">
+            {/* Email */}
+            <div>
+            
               <input
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                id="email"
+                name="email"
+                type="email"
+                onChange={handleChangeSignUP}
+                required
+                placeholder="Email"
+                className="w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400
+                         focus:outline-none transition duration-150
+                         hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
-              Remember me
-            </label>
-            <a href="#" className="hover:text-blue-500">
-              Forgot password?
-            </a>
-          </div>
-        </form>
+            
+              <input
+                id="phone"
+                name="phone"
+                type="phone"
+                onChange={handleChangeSignUP}
+                required
+                placeholder="Phone"
+                className="mt-4 w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400
+                         focus:outline-none transition duration-150
+                         hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              />
 
-        <footer className="mt-4 text-center text-xs text-gray-400">
-          By signing in you agree to our{" "}
-          <a href="#" className="hover:text-blue-500">
-            Terms
-          </a>
-          .
-        </footer>
-      </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <div className="relative mb-5">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="Password"
+                  onChange={handleChangeSignUP}
+                  className="w-full bg-transparent border border-gray-300 rounded-lg px-4 py-3 pr-12 text-gray-900 placeholder-gray-400
+                           focus:outline-none transition duration-150
+                           hover:border-blue-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-2 flex items-center px-2 text-sm text-gray-600 hover:text-blue-500 focus:outline-none"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              <ReCAPTCHA
+                sitekey="6LcSus8rAAAAADMFRUBVlKgg0saBSjW6oAZgR_KP"
+                onChange={(token) => setCaptchaToken(token)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-lg px-4 py-3 font-medium shadow-sm
+                       bg-transparent border border-blue-500 text-blue-600
+                       hover:bg-blue-400 hover:text-white transition-colors duration-150"
+              disabled={isSending}
+            >
+              {isSending ? "Sign UP..." : isSent ? "Sign Up" : "Sign Up"}
+            </button>
+
+            {/* Extras */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
+                Remember me
+              </label>
+              <a href="#" className="hover:text-blue-500">
+                Forgot password?
+              </a>
+            </div>
+          </form>
+          <button
+            onClick={loginForm}
+            className="mx-auto mt-2 underline text-sm hover:text-blue-400"
+          >
+            Sign in
+          </button>
+        </div>
+      )}
     </div>
   );
 }

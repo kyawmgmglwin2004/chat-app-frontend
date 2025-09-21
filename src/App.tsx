@@ -1,11 +1,12 @@
 import './App.css'
 import Login  from './pages/Login';
+import Term from './pages/TermsAndCondition'
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Outlet,
-  Navigate,
+  // Outlet,
+  // Navigate,
   // HashRouter,
 } from "react-router-dom";
 
@@ -15,6 +16,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login/>}></Route>
+          <Route path="/term" element={<Term/>}></Route>
         </Routes>
       </Router>
   )
