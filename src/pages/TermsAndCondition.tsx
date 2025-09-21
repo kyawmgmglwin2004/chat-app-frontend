@@ -1,4 +1,4 @@
-
+import { useNavigate } from "react-router-dom";
 type Props = {
   appName?: string;
   effectiveDate?: string; // e.g. "September 21, 2025"
@@ -7,15 +7,17 @@ type Props = {
 export default function TermsAndConditions({
   appName = "CHATNEST",
   effectiveDate = "September 21, 2025",
+  
 }: Props) {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white text-sky-900">
       <header className="bg-sky-50 border-b border-sky-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white font-bold">
+            {/* <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white font-bold">
               {appName.charAt(0)}
-            </div>
+            </div> */}
             <div>
               <h1 className="text-2xl font-semibold">{appName} — Terms & Conditions</h1>
               <p className="text-sm text-sky-600">Effective date: {effectiveDate}</p>
@@ -250,7 +252,14 @@ export default function TermsAndConditions({
           <footer className="mt-10">
             <div className="flex items-center justify-between border-t border-sky-100 pt-6">
               <div className="text-sm text-sky-600">© {new Date().getFullYear()} {appName}. All rights reserved.</div>
-              <a id="accept" href="#" className="inline-flex items-center px-4 py-2 rounded-lg bg-sky-600 text-white font-medium shadow-sm hover:bg-sky-700">I Accept</a>
+                <button
+                id="accept" className="inline-flex items-center px-4 py-2 rounded-lg bg-sky-600 text-white font-medium shadow-sm hover:bg-sky-700"
+                onClick={() => {
+                  navigate("/login")
+                }}
+                >
+                  I Accept
+                </button>
             </div>
           </footer>
         </article>

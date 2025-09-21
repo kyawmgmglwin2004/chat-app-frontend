@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+   const [checked, setChecked] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -44,6 +47,11 @@ export default function Login() {
     }
     setIsSending(true);
     setIsSent(false);
+    if (checked) {
+      navigate("/term");
+    } else {
+      alert("Please agree to the Terms & Conditions before proceeding.");
+    }
 
     try {
       const response = await fetch("",
@@ -183,8 +191,9 @@ export default function Login() {
               {isSending ? "Logining..." : isSent ? "Login" : "Login"}
             </button>
 
+       
             {/* Extras */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500">
+            {/* <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -192,17 +201,40 @@ export default function Login() {
                 />
                 Remember me
               </label>
-              <a href="#" className="hover:text-blue-500">
-                Forgot password?
-              </a>
-            </div>
+             
+            </div> */}
           </form>
+            <label className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(e) => setChecked(e.target.checked)}
+                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 "
+                />
+                <button onClick={() => {
+                  navigate("/term")
+                }}
+                className="hover:text-blue-400 text-sm"
+                >
+                  I agree Terms & Condition
+                </button>
+              </label>
+           <div className="flex flex-row justify-between mt-5">
+            <button onClick={() => {
+                navigate("/forgotpsw")
+              }}
+              className="hover:text-blue-500 mb-4"
+
+              >
+                forgot password?
+              </button>
           <button
             onClick={signUpForm}
-            className="mx-auto mt-2 underline text-sm hover:text-blue-400"
+            className=" underline text-sm hover:text-blue-400"
           >
             Sign Up
           </button>
+           </div>
         </div>
       )}
       {signUP && (
@@ -282,16 +314,10 @@ export default function Login() {
 
             {/* Extras */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                />
-                Remember me
-              </label>
-              <a href="#" className="hover:text-blue-500">
+             
+              {/* <a href="#" className="hover:text-blue-500">
                 Forgot password?
-              </a>
+              </a> */}
             </div>
           </form>
           <button

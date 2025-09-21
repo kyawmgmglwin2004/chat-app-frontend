@@ -1,6 +1,7 @@
 import './App.css'
 import Login  from './pages/Login';
-import Term from './pages/TermsAndCondition'
+import Term from './pages/TermsAndCondition';
+import ForgotPsw from './pages/ForgotPsw';
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,6 +19,7 @@ function App() {
            <Route path="*" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/term" element={<Term/>}></Route>
+          <Route path="/forgotpsw" element={<ForgotPsw/>}></Route>
         </Routes>
       </Router>
   )
