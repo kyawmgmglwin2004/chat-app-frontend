@@ -168,7 +168,7 @@ export default function Login() {
                 </button>
               </div>
               <ReCAPTCHA
-                sitekey="6LfjLNArAAAAAP9DoYQ0Ll4ATWX0aaUSIzJrL9ow"
+                sitekey="6LcsLtArAAAAAOCBKk0o-IL4KfaPh1s3XORAF1sy"
                 onChange={(token) => setCaptchaToken(token)}
               />
             </div>
@@ -265,7 +265,7 @@ export default function Login() {
                 </button>
               </div>
               <ReCAPTCHA
-                sitekey="6LfjLNArAAAAAP9DoYQ0Ll4ATWX0aaUSIzJrL9ow"
+                sitekey="6LcsLtArAAAAAOCBKk0o-IL4KfaPh1s3XORAF1sy"
                 onChange={(token) => setCaptchaToken(token)}
               />
             </div>
