@@ -1,4 +1,5 @@
 import './App.css'
+import './index.css'
 import Login  from './pages/Login';
 import Term from './pages/TermsAndCondition';
 import ForgotPsw from './pages/ForgotPsw';
