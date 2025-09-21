@@ -47,12 +47,9 @@ export default function Login() {
     }
     setIsSending(true);
     setIsSent(false);
-    if (checked) {
-      navigate("/term");
-    } else {
+    if (!checked) {
       alert("Please agree to the Terms & Conditions before proceeding.");
-    }
-
+    } 
     try {
       const response = await fetch("",
         {
@@ -186,7 +183,7 @@ export default function Login() {
               className="w-full rounded-lg px-4 py-3 font-medium shadow-sm
                        bg-transparent border border-blue-500 text-blue-600
                        hover:bg-blue-400 hover:text-white transition-colors duration-150"
-              disabled={isSending}
+              disabled={isSending && !checked}
             >
               {isSending ? "Logining..." : isSent ? "Login" : "Login"}
             </button>
