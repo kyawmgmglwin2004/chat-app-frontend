@@ -8,7 +8,7 @@ export default defineConfig({
     tailwindcss(),
     react(),
     VitePWA({
-      registerType: 'autoUpdate', // service worker ကို auto update လုပ်မယ်
+      registerType: 'autoUpdate',
       manifest: {
         name: 'My React PWA',
         short_name: 'MyPWA',

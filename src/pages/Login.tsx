@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useNavigate } from "react-router-dom";
+import Alert from "../components/Alertbox";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-   const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -20,6 +21,8 @@ export default function Login() {
   const [isSent, setIsSent] = useState(false);
   const [signUP, setSignUp] = useState(false);
   const [login, setLogin] = useState(true);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"success" | "error">("success");
 
   const signUpForm = () => {
     setSignUp(true);
@@ -43,13 +46,16 @@ export default function Login() {
     e.preventDefault();
     console.log("token: ", captchaToken);
     if (!captchaToken) {
-      alert("Please verify that you are not a robot.");
+        setAlertType("error");
+        setAlertMessage("Please verify robot test.")
+        return;
     }
     setIsSending(true);
     setIsSent(false);
     if (!checked) {
-      alert("Please agree to the Terms & Conditions before proceeding.");
-    } 
+      setAlertType("error");
+      setAlertMessage("Please agree to the Terms & Conditions before proceeding.")
+      return;    } 
     try {
       const response = await fetch("",
         {
@@ -59,17 +65,22 @@ export default function Login() {
       }
       );
       console.log("result: ", response);
-      if(response.ok) {
+      const result = await response.json();
+      const message = result.message;
+      if(result.code === "200") {
         setIsSent(true);
         setFormData({ email: "", password: ""});
+        setAlertMessage("Successfully sent email.");
+        setAlertType("success");
       }else {
-        setIsSent(false);
-        alert("Failed to Login!");
+        setIsSent(true);
+        setAlertMessage(String(message));
+        setAlertType("error");
       }
     } catch (error) {
-       console.error(error);
-      alert("An error occurred. Try again.");
-      setIsSent(false);
+      console.error(error);
+      setAlertMessage(String(error));
+      setAlertType("error");
     } finally {
        setIsSending(false);
     }
@@ -78,7 +89,9 @@ export default function Login() {
     e.preventDefault();
     console.log("token: ", captchaToken);
     if (!captchaToken) {
-      alert("Please verify that you are not a robot.");
+      setAlertType("error");
+      setAlertMessage("Please verify robot test. ")
+      return;
     }
     setIsSending(true);
     setIsSent(false);
@@ -92,16 +105,22 @@ export default function Login() {
       }
       );
       console.log("result: ", response);
-      if(response.ok) {
+      const result = await response.json();
+      const message = result.message;
+      if(result.code === "200") {
         setIsSent(true);
         setData({ email: "", password: "", phone: ""});
+        setAlertMessage("Successfully sent email.");
+        setAlertType("success");
       }else {
-        setIsSent(false);
-        alert("Failed to Login!");
+        setIsSent(true);
+        setAlertMessage(String(message));
+        setAlertType("error");
       }
     } catch (error) {
        console.error(error);
-      alert("An error occurred. Try again.");
+      setAlertMessage(String(error));
+      setAlertType("error");
       setIsSent(false);
     } finally {
        setIsSending(false);
@@ -112,7 +131,11 @@ export default function Login() {
   //   console.log("Login attempt:", { email, password });
   //   alert("Submitted — check console for data.");
   // };
-
+ useEffect(()=>{
+    setTimeout(() => {
+      setAlertMessage(null)
+    }, 5000);
+  },[alertMessage])
   return (
     <div className=" flex items-center justify-center mt-[15vh] lg:mt-[3vh]">
       {login && (
@@ -323,6 +346,12 @@ export default function Login() {
           >
             Sign in
           </button>
+           {alertMessage && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+        />
+      )}
         </div>
       )}
     </div>
