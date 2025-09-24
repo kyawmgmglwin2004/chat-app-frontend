@@ -43,48 +43,55 @@ export default function Login() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("token: ", captchaToken);
-    if (!captchaToken) {
-        setAlertType("error");
-        setAlertMessage("Please verify robot test.")
-        return;
+  e.preventDefault();
+  console.log("token: ", captchaToken);
+
+  if (!captchaToken) {
+    setAlertType("error");
+    setAlertMessage("Please verify robot test.");
+    return;
+  }
+
+  if (!checked) {
+    setAlertType("error");
+    setAlertMessage("Please agree to the Terms & Conditions before proceeding.");
+    return;
+  }
+
+  setIsSending(true);
+  setIsSent(false);
+
+  try {
+    const response = await fetch("", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...formData, captchaToken }),
+    });
+
+    console.log("response: ", response);
+    const result = await response.json();
+    const message = result.message || "Unknown error";
+
+    if (response.ok) {
+      setIsSent(true);
+      setFormData({ email: "", password: "" });
+      setAlertMessage("Successfully sent email.");
+      setAlertType("success");
+    } else {
+      setIsSent(false);
+      setAlertMessage(message);
+      setAlertType("error");
     }
-    setIsSending(true);
+  } catch (error) {
+    console.error(error);
     setIsSent(false);
-    if (!checked) {
-      setAlertType("error");
-      setAlertMessage("Please agree to the Terms & Conditions before proceeding.")
-      return;    } 
-    try {
-      const response = await fetch("",
-        {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({...formData, captchaToken}),
-      }
-      );
-      console.log("result: ", response);
-      const result = await response.json();
-      const message = result.message;
-      if(result.code === "200") {
-        setIsSent(true);
-        setFormData({ email: "", password: ""});
-        setAlertMessage("Successfully sent email.");
-        setAlertType("success");
-      }else {
-        setIsSent(true);
-        setAlertMessage(String(message));
-        setAlertType("error");
-      }
-    } catch (error) {
-      console.error(error);
-      setAlertMessage(String(error));
-      setAlertType("error");
-    } finally {
-       setIsSending(false);
-    }
-  };
+    setAlertMessage(String(error));
+    setAlertType("error");
+  } finally {
+    setIsSending(false);
+  }
+};
+
   const handleSubmitSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("token: ", captchaToken);
@@ -106,8 +113,8 @@ export default function Login() {
       );
       console.log("result: ", response);
       const result = await response.json();
-      const message = result.message;
-      if(result.code === "200") {
+      const message = result.message || "Unknown error";
+      if(result.code == "200") {
         setIsSent(true);
         setData({ email: "", password: "", phone: ""});
         setAlertMessage("Successfully sent email.");
@@ -255,6 +262,12 @@ export default function Login() {
             Sign Up
           </button>
            </div>
+            {alertMessage && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+        />
+      )}
         </div>
       )}
       {signUP && (
