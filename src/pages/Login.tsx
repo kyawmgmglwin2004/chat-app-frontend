@@ -69,8 +69,8 @@ export default function Login() {
     });
 
     console.log("response: ", response);
-    const result = await response.json();
-    const message = result.message || "Unknown error";
+    // const result = await response.json();
+    const message =  "Unknown error";
 
     if (response.ok) {
       setIsSent(true);
@@ -112,9 +112,9 @@ export default function Login() {
       }
       );
       console.log("result: ", response);
-      const result = await response.json();
-      const message = result.message || "Unknown error";
-      if(result.code == "200") {
+      // const result = await response.json();
+      const message =  "Unknown error";
+      if(response.ok) {
         setIsSent(true);
         setData({ email: "", password: "", phone: ""});
         setAlertMessage("Successfully sent email.");
