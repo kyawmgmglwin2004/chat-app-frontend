@@ -1,6 +1,7 @@
 import brandIcon from "../icons/logo512.png";
 import userProfile from "../assets/images/userProfile.jpg";
 import { SearchOutlined, BellTwoTone } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 const Header = () => {
   return (
     <div className="bg-[#e1f6f4] flex items-center justify-between h-16 py-2 ">
@@ -18,11 +19,13 @@ const Header = () => {
       </div>
       <div className="flex items-center justify-center gap-3 w-[8%]">
         <BellTwoTone style={{ fontSize: "26px" }} />
-        <img
-          src={userProfile}
-          alt="userProfile"
-          className="w-10 h-10 rounded-full"
-        />
+        <Link to="/profile">
+          <img
+            src={userProfile}
+            alt="userProfile"
+            className="w-10 h-10 rounded-full"
+          />
+        </Link>
       </div>
     </div>
   );
